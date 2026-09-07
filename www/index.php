@@ -44,52 +44,6 @@ if (empty($page)) {
         require ROOT . '/pages/404.php';
     }
 }
-/*
-function slug_create($ner, $table, $field)
-{
-    $generator = new SlugGenerator;
-    $slug = mb_strtolower($ner);
-    $slug = str_replace("ө", "u", $slug);
-    $slug = str_replace("ү", "u", $slug);
-    $slug = substr($slug, 0, 199);
-    $slug = $generator->generate($slug);
-    _selectRowNoParam(
-        "SELECT COUNT(id) FROM $table WHERE $field = '$slug'",
-        $cateToo
-    );
-    $dd = 1;
-    if ($cateToo > 0) {
-        $slug = substr($slug, 0, 195);
-        $slug .= $dd;
-        $slug = slug_create($slug, $table, $field);
-    }
-    return $slug;
-}
-*/
-function slug_create($ner, $table, $field)
-{
-    $length = 18;
-    $stringSpace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $pieces = [];
-    $max = mb_strlen($stringSpace, '8bit') - 1;
-    for ($i = 0; $i < $length; ++$i) {
-        $pieces[] = $stringSpace[random_int(0, $max)];
-    }
-
-    $slug = implode('', $pieces);
-
-    _selectRowNoParam(
-        "SELECT COUNT(id) FROM $table WHERE $field = '$slug'",
-        $cateToo
-    );
-    $dd = 1;
-    if ($cateToo > 0) {
-        $slug = substr($slug, 0, 195);
-        $slug .= $dd;
-        $slug = slug_create($slug, $table, $field);
-    }
-    return $slug;
-}
 
 function dayofweek($ognoo)
 {
