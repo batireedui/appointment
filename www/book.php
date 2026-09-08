@@ -59,9 +59,10 @@ require_once __DIR__ . '/includes/header.php';
   <!-- STEP 3: DATE + SLOT -->
   <div class="step-panel" id="panel-3" style="display:none;">
     <h3>Огноо, цаг сонгоно уу</h3>
-    <label>Огноо</label>
-    <input type="date" id="dateInput" style="max-width:220px;">
-    <div id="slotArea" style="margin-top:18px;"></div>
+    <div class="calendar-layout">
+      <div id="calendarWidget" class="calendar"></div>
+      <div id="slotArea" class="slot-area"></div>
+    </div>
     <button class="btn btn-outline btn-sm" data-back="2" style="margin-top:16px;">← Буцах</button>
   </div>
 
