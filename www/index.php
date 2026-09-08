@@ -1,256 +1,72 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/functions.php';
+$pageTitle = 'Нүүр';
+$db = getDB();
+$doctors = $db->query("SELECT * FROM doctors WHERE status='active' ORDER BY name LIMIT 3")->fetchAll();
+$services = $db->query("SELECT * FROM services WHERE status='active' ORDER BY name LIMIT 4")->fetchAll();
+require_once __DIR__ . '/includes/header.php';
+?>
 
-//$_SESSION['user_id'] = 1;
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="kicker">Онлайн цаг захиалга</span>
+      <h1>Эмчид үзүүлэх цагаа гурван товшилтоор захиал.</h1>
+      <p class="lede">Дараалалд зогсох шаардлагагүй. Үйлчилгээгээ сонгоод, чөлөөтэй эмчээ, тохирох цагаа олж, шууд баталгаажуулна.</p>
+      <div class="hero-actions">
+        <a href="book.php" class="btn btn-accent">Цаг захиалах</a>
+        <a href="doctors.php" class="btn btn-outline">Эмч нартай танилцах</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-copy"><strong>Үйлчилгээгээ сонго</strong><span>Ямар үзлэг хэрэгтэй байгаагаа сонгоно</span></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-copy"><strong>Эмч, огноо сонго</strong><span>Чөлөөтэй цагуудаас өөрт тохирохыг сонгоно</span></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-copy"><strong>Баталгаажуулна</strong><span>Захиалга шууд баталгаажиж, түүхэндээ хадгалагдана</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-date_default_timezone_set('Asia/Singapore');
-ini_set('display_errors', 1);
-define('ROOT', dirname(dirname(__FILE__)));
+<section class="block container">
+  <div class="block-head">
+    <h2>Түгээмэл үйлчилгээ</h2>
+    <a href="services.php" class="muted">Бүх үйлчилгээг харах →</a>
+  </div>
+  <div class="grid grid-3">
+    <?php foreach ($services as $s): ?>
+      <div class="card">
+        <div class="meta"><?= (int)$s['duration'] ?> минут</div>
+        <h3><?= e($s['name']) ?></h3>
+        <p><?= e($s['description']) ?></p>
+        <div class="price"><?= formatMoney((float)$s['price']) ?></div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</section>
 
-require ROOT . '/inc/conf.php';
-require ROOT . '/inc/db.php';
+<section class="block container">
+  <div class="block-head">
+    <h2>Манай эмч нар</h2>
+    <a href="doctors.php" class="muted">Бүх эмчийг харах →</a>
+  </div>
+  <div class="grid grid-3">
+    <?php foreach ($doctors as $d): ?>
+      <div class="card">
+        <div class="doctor-photo"></div>
+        <div class="meta"><?= e($d['specialty']) ?></div>
+        <h3><?= e($d['name']) ?></h3>
+        <a href="book.php?doctor_id=<?= (int)$d['id'] ?>" class="btn btn-outline btn-sm">Цаг захиалах</a>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</section>
 
-//use Ausi\SlugGenerator\SlugGenerator;
-
-$page = @$_SERVER['REDIRECT_URL'];
-
-$favi = DOMAIN . "/images/logo.png";
-
-$menuTypeArr = ['category' => 'Ангилал', 'post' => 'Нийтлэл', 'link' => 'Холбоос', 'submenu' => 'Дээд цэс'];
-$userTypeArr = ['1' => 'Admin', '2' => 'Нийтлэгч'];
-
-$linkArr = ['1' => 'Хамтрагч байгууллага', '2' => 'Холбоос'];
-if (!isset($_SESSION['lang'])) {
-    $_SESSION['lang'] = 'mn';
-}
-
-$lang = "";
-if ($_SESSION['lang'] == 'mn') {
-    $lang = "";
-} else $lang = "_en";
-
-
-$local = array("lang" => "lang");
-
-$webname = "ХАА";
-
-if (empty($page)) {
-    require ROOT . '/pages/home.php';
-} else {
-    $script = ROOT . "/pages$page.php";
-    if (file_exists($script)) {
-        require $script;
-    } else {
-        require ROOT . '/pages/404.php';
-    }
-}
-
-function dayofweek($ognoo)
-{
-    $day = date('w', strtotime($ognoo));
-    switch ($day) {
-        case 1:
-            return "Даваа";
-        case 2:
-            return "Мягмар";
-        case 3:
-            return "Лхагва";
-        case 4:
-            return "Пүрэв";
-        case 5:
-            return "Баасан";
-        case 6:
-            return "Бямба";
-        case 0:
-            return "Ням";
-        default:
-            return $day;
-    }
-}
-
-function logError($e)
-{
-    _exec(
-        "insert into error set
-        ognoo = now(),
-        ip=?,
-        error_code=?,
-        error=?,
-        file=?,
-        line=?,
-        site='user'
-    ",
-        'sissi',
-        [getIpAddress(), $e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine()],
-        $count
-    );
-}
-
-function redirect($url)
-{
-    header("Location: $url");
-    exit;
-}
-
-function dd($arr, $exit = false)
-{
-    echo '<pre>';
-    print_r($arr);
-    if ($exit) {
-        exit;
-    }
-}
-
-function post($name, $length = null)
-{
-    $value = $_POST[$name];
-
-    $value = addslashes($value);
-
-    if (!is_null($length) && mb_strlen($value) > $length) {
-        $value = mb_substr($value, 0, $length);
-        // Security alert! DB write, email send
-        echo "<br>security alert : $name индекстэй өгөгдөл $length уртаас хэтэрсэн өгөгдөлтэй байна!<br>";
-    }
-
-    return $value;
-}
-
-function get($name, $length = null)
-{
-    $value = $_GET[$name];
-
-    $value = addslashes($value);
-
-    if (!is_null($length) && mb_strlen($value) > $length) {
-        $value = mb_substr($value, 0, $length);
-        // Security alert! DB write, email send
-        echo "<br>security alert : $name индекстэй өгөгдөл $length уртаас хэтэрсэн өгөгдөлтэй байна!<br>";
-    }
-
-    return $value;
-}
-
-function getIpAddress()
-{
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) // check ip from share internet
-    {
-        return $_SERVER['HTTP_CLIENT_IP'];
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) // to check ip is pass from proxy
-    {
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
-    }
-    return $_SERVER['REMOTE_ADDR'];
-}
-
-function formatMoney($value)
-{
-    if ($value == '0') {
-        return '';
-    } else {
-        $value = number_format(sprintf('%0.2f', preg_replace("/[^0-9.]/", "", $value)), 0);
-        return $value;
-    }
-}
-function ognoo()
-{
-    $tz = 'Asia/Ulaanbaatar';
-    $timestamp = time();
-    $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
-    $dt->setTimestamp($timestamp); //adjust the object to correct timestamp
-    return $dt->format('Y/m/d H:i:s');
-}
-function ognooday()
-{
-    $tz = 'Asia/Ulaanbaatar';
-    $timestamp = time();
-    $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
-    $dt->setTimestamp($timestamp); //adjust the object to correct timestamp
-    return $dt->format('Y/m/d');
-}
-
-function select_subcate($prefix, $cate_id, $active = null)
-{
-
-    $val = "";
-
-    _selectNoParam(
-        $stCa,
-        $coCA,
-        "SELECT id, name, tai, parent_id, tuluv FROM category WHERE parent_id = '$cate_id'",
-        $cid,
-        $cname,
-        $ctai,
-        $cparent_id,
-        $ctuluv
-    );
-
-    $dd = 0;
-    while (_fetch($stCa)) {
-        $dd++;
-        $val .= "<option value='$cid'";
-        $cid == $active ? $val .= " selected" : "";
-        $val .= ">$prefix&nbsp;&nbsp; $cname</option>";
-        $val .= select_subcate("$prefix&nbsp;&nbsp;", $cid);
-    }
-    return $val;
-}
-
-function select_submenu($prefix, $cate_id, $active = null)
-{
-
-    $val = "";
-
-    _selectNoParam(
-        $stCa,
-        $coCA,
-        "SELECT id, name, tai, parent_id, tuluv FROM menu WHERE parent_id = '$cate_id'",
-        $cid,
-        $cname,
-        $ctai,
-        $cparent_id,
-        $ctuluv
-    );
-
-    $dd = 0;
-    while (_fetch($stCa)) {
-        $dd++;
-        $val .= "<option value='$cid'";
-        $cid == $active ? $val .= " selected" : "";
-        $val .= ">$prefix&nbsp;&nbsp; $cname</option>";
-        $val .= select_subcate("$prefix&nbsp;&nbsp;", $cid);
-    }
-    return $val;
-}
-
-function select_subcatecheck(int $prefix, $cate_id, $active = null)
-{
-
-    $val = "";
-
-    _selectNoParam(
-        $stCa,
-        $coCA,
-        "SELECT id, name, tai, parent_id, tuluv FROM category WHERE parent_id = '$cate_id'",
-        $cid,
-        $cname,
-        $ctai,
-        $cparent_id,
-        $ctuluv
-    );
-
-    $dd = 0;
-    $prefix += 1;
-    while (_fetch($stCa)) {
-        $dd = $dd + 1;
-        $val .= "<div class='form-check' style='margin-left: $prefix" . "rem'><input class='form-check-input' type='checkbox' value='$cid' name='cate_id[]'  id='cate$cid'";
-        $cid == $active ? $val .= " checked" : "";
-        $val .= "><label class='form-check-label' for='cate$cid'>$cname</label></div>";
-        $val .= select_subcatecheck($prefix, $cid);
-    }
-
-    return $val;
-}
-function _format_date($ognoo){
-    return date_format(date_create($ognoo),"Y.m.d");
-}
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
