@@ -144,6 +144,19 @@
   // ---- confirm booking ----
   qs('#confirmBtn').addEventListener('click', function () {
     clearAlert();
+    const name = qs('#nameInput').value.trim();
+    const phone = qs('#phoneInput').value.trim();
+    const email = qs('#emailInput').value.trim();
+
+    if (!name || !phone || !email) {
+      showAlert('Нэр, утас, имэйлээ бөглөнө үү.', 'error');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showAlert('Имэйл хаягаа зөв оруулна уу.', 'error');
+      return;
+    }
+
     this.disabled = true;
     this.textContent = 'Илгээж байна…';
     fetch('ajax/book.php', {
@@ -156,6 +169,9 @@
         start: state.slot.start,
         end: state.slot.end,
         note: qs('#noteInput').value,
+        name: name,
+        phone: phone,
+        email: email,
       }),
     }).then((r) => r.json().then((body) => ({ ok: r.ok, body }))).then(({ ok, body }) => {
       if (!ok) {
@@ -165,7 +181,7 @@
         if (String(body.error || '').includes('захиалагдсан')) { loadSlots(); }
         return;
       }
-      window.location.href = 'my-appointments.php?booked=1';
+      window.location.href = 'booking-success.php?id=' + body.appointment_id;
     }).catch(() => {
       showAlert('Сүлжээний алдаа гарлаа. Дахин оролдоно уу.', 'error');
       this.disabled = false;

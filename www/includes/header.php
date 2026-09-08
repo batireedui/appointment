@@ -20,6 +20,8 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
       <a href="services.php" class="<?= $currentPage==='services.php'?'active':'' ?>">Үйлчилгээ</a>
       <?php if (isPatientLoggedIn()): ?>
         <a href="my-appointments.php" class="<?= $currentPage==='my-appointments.php'?'active':'' ?>">Миний захиалга</a>
+      <?php else: ?>
+        <a href="find-appointments.php" class="<?= $currentPage==='find-appointments.php'?'active':'' ?>">Захиалгаа шалгах</a>
       <?php endif; ?>
     </nav>
     <div class="nav-actions">

@@ -3,6 +3,11 @@
 -- Нэмэлт: users, email, price, status enum-үүд
 -- ============================================================
 
+-- Кирилл үсэг зөв хадгалагдахын тулд клиент холболтын кодчилолыг
+-- заавал utf8mb4 болгоно (энэ мөр байхгүй бол зарим mysql client
+-- анхдагч latin1-ээр уншиж, өгөгдлийг давхар кодлож гэмтээж болно).
+SET NAMES utf8mb4;
+
 CREATE DATABASE IF NOT EXISTS hospital_appointment
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE hospital_appointment;

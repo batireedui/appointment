@@ -38,8 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name, $phone, $email, password_hash($password, PASSWORD_DEFAULT),
             $registerNo ?: null, $birthDate ?: null, $gender ?: null,
         ]);
-        $_SESSION['patient_id']   = $db->lastInsertId();
-        $_SESSION['patient_name'] = $name;
+        $_SESSION['patient_id']    = $db->lastInsertId();
+        $_SESSION['patient_name']  = $name;
+        $_SESSION['patient_email'] = $email;
+        $_SESSION['patient_phone'] = $phone;
         flash('success', 'Тавтай морил! Бүртгэл амжилттай үүслээ.');
         redirect('index.php');
     }

@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/functions.php';
 $pageTitle = 'Цаг захиалах';
-requirePatientLogin();
 
 $db = getDB();
 $services = $db->query("SELECT * FROM services WHERE status='active' ORDER BY name")->fetchAll();
@@ -75,6 +74,22 @@ require_once __DIR__ . '/includes/header.php';
       <p><strong>Огноо:</strong> <span id="cfDate"></span></p>
       <p><strong>Цаг:</strong> <span id="cfTime"></span></p>
       <p><strong>Үнэ:</strong> <span id="cfPrice"></span></p>
+
+      <label>Овог нэр</label>
+      <input type="text" id="nameInput" value="<?= e($_SESSION['patient_name'] ?? '') ?>" placeholder="Таны нэр" required>
+
+      <div class="form-row">
+        <div>
+          <label>Утасны дугаар</label>
+          <input type="tel" id="phoneInput" value="<?= e($_SESSION['patient_phone'] ?? '') ?>" placeholder="99001122" required>
+        </div>
+        <div>
+          <label>Имэйл</label>
+          <input type="email" id="emailInput" value="<?= isPatientLoggedIn() ? e($_SESSION['patient_email'] ?? '') : '' ?>" placeholder="you@example.com" required>
+        </div>
+      </div>
+      <div class="field-hint">Захиалгын мэдээллийг энэ имэйлээр илгээнэ. Дараа дахин захиалахдаа мөн имэйлээ ашиглавал захиалгуудаа шалгах боломжтой.</div>
+
       <label>Нэмэлт тэмдэглэл (заавал биш)</label>
       <textarea id="noteInput" placeholder="Жишээ нь: гар өвдөж байгаа"></textarea>
       <button class="btn btn-accent btn-block" id="confirmBtn" style="margin-top:14px;">Захиалга баталгаажуулах</button>

@@ -8,9 +8,10 @@ PHP + MySQL + HTML/CSS/JS дээр бүтээсэн эмнэлгийн цаг з
 1. **Өгөгдлийн сан үүсгэх**
    `sql/schema.sql`-ыг MySQL/MariaDB дээрээ ажиллуулна (жишээ нь phpMyAdmin эсвэл):
    ```
-   mysql -u root -p < sql/schema.sql
+   mysql --default-character-set=utf8mb4 -u root -p < sql/schema.sql
    ```
    Энэ нь `hospital_appointment` санг үүсгэж, хүснэгтүүд болон жишээ өгөгдлийг (эмч, үйлчилгээ) хийж өгнө.
+   `--default-character-set=utf8mb4` заавал ашиглана уу — эс бөгөөс кирилл үсэг (эмчийн нэр гэх мэт) буруу кодлогдож болзошгүй. phpMyAdmin ашиглаж байгаа бол "Import" цонхны кодчиллыг utf-8 болгосон эсэхийг шалгана уу.
 
 2. **Холболтын тохиргоо**
    `config/database.php` дотор өөрийн серверийн мэдээллийг оруулна:

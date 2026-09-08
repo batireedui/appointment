@@ -18,8 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($patient['status'] !== 'active') {
         $error = 'Таны бүртгэл идэвхгүй байна.';
     } else {
-        $_SESSION['patient_id']   = $patient['id'];
-        $_SESSION['patient_name'] = $patient['name'];
+        $_SESSION['patient_id']    = $patient['id'];
+        $_SESSION['patient_name']  = $patient['name'];
+        $_SESSION['patient_email'] = $patient['email'];
+        $_SESSION['patient_phone'] = $patient['phone'];
         redirect('index.php');
     }
 }
